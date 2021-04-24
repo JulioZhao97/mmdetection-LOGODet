@@ -1,0 +1,6 @@
+CUDA_VISIBLE_DEVICES=0 python tools/test.py configs/faster_rcnn/logo_faster_rcnn_r50_fpn_1x_coco_stage0.py /data/zhaozhiyuan/mmdetection_checkpoints/logo_faster_rcnn_r50_fpn_1x_coco_stage0/epoch_1.pth --eval mAP
+CUDA_VISIBLE_DEVICES=0 python tools/test.py configs/faster_rcnn/logo_faster_rcnn_r50_fpn_1x_coco_stage0.py /data/zhaozhiyuan/mmdetection_checkpoints/logo_faster_rcnn_r50_fpn_1x_coco_stage0/epoch_2.pth --eval mAP
+CUDA_VISIBLE_DEVICES=0 python tools/test.py configs/faster_rcnn/logo_faster_rcnn_r50_fpn_1x_coco_stage0.py /data/zhaozhiyuan/mmdetection_checkpoints/logo_faster_rcnn_r50_fpn_1x_coco_stage0/epoch_3.pth --eval mAP
+CUDA_VISIBLE_DEVICES=0 python tools/test.py configs/faster_rcnn/logo_faster_rcnn_r50_fpn_1x_coco_stage0.py /data/zhaozhiyuan/mmdetection_checkpoints/logo_faster_rcnn_r50_fpn_1x_coco_stage0/epoch_4.pth --eval mAP
+CUDA_VISIBLE_DEVICES=0 python tools/test.py configs/faster_rcnn/logo_faster_rcnn_r50_fpn_1x_coco_stage0.py /data/zhaozhiyuan/mmdetection_checkpoints/logo_faster_rcnn_r50_fpn_1x_coco_stage0/epoch_5.pth --eval mAP
+CUDA_VISIBLE_DEVICES=0 python tools/test.py configs/faster_rcnn/logo_faster_rcnn_r50_fpn_1x_coco_stage0.py /data/zhaozhiyuan/mmdetection_checkpoints/logo_faster_rcnn_r50_fpn_1x_coco_stage0/epoch_6.pth --eval mAP

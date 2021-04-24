@@ -1,0 +1,2 @@
+CUDA_VISIBLE_DEVICES=3 python tools/train.py configs/faster_rcnn/logo_faster_rcnn_r50_fpn_1x_coco_attention_detector_3classes_idea_test.py
+CUDA_VISIBLE_DEVICES=3 python tools/train.py configs/faster_rcnn/logo_faster_rcnn_r50_fpn_1x_coco_attention_detector_3classes_idea_test.py
