@@ -40,8 +40,8 @@ undo
 
 ## undo experiments
 
-- [] problem of score threshold in testing
-- [] testing result is unstable
-- [] difference between domain adaptation
-- [] is our module really lead to the improvments?
-- [] comparison with other few-shot detection method 
+- [ ] problem of score threshold in testing
+- [ ] testing result is unstable
+- [ ] difference between domain adaptation
+- [ ] is our module really lead to the improvments?
+- [ ] comparison with other few-shot detection method 
