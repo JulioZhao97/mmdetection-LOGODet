@@ -30,7 +30,12 @@ class LogoTwoStageDetectorAttentionDetector(BaseDetector):
                  train_cfg=None,
                  test_cfg=None,
                  pretrained=None,
-                 support_type=None):
+                 support_type=None,
+                 support_imgs=None,
+                 data_path=None,
+                 classes=None,
+                 config=None
+                ):
         super(LogoTwoStageDetectorAttentionDetector, self).__init__()
         self.backbone = build_backbone(backbone)
         if neck is not None:
@@ -57,15 +62,23 @@ class LogoTwoStageDetectorAttentionDetector(BaseDetector):
         self.style_to_file = {}
         self.file_to_style = {}
         self.file_to_name = {}
-        self.data_path = '/data/zhaozhiyuan/tb_variation/VOCdevkit_all'
+        #self.data_path = '/data/zhaozhiyuan/tb_variation/VOCdevkit_all'
+        self.data_path = data_path
         self.anno_path = os.path.join(self.data_path, 'VOC2007', 'Annotations')
         self.pic_path = os.path.join(self.data_path, 'VOC2007', 'JPEGImages')
-        self.classes = ['001-CCTV1', '019-fenghuangweishi', '011-history_channel']
-        
-        self.config = '/home/zhaozhiyuan/workspace/tb_variation/mmdetection-master/configs/faster_rcnn/logo_faster_rcnn_r50_fpn_1x_coco_attention_detector_3classes_normal_init.py'
+        self.classes = classes
+        #self.classes = ['001-CCTV1', '019-fenghuangweishi', '011-history_channel']
+        self.config = config
+        #self.config = '/home/zhaozhiyuan/workspace/tb_variation/mmdetection-master/configs/faster_rcnn/logo_faster_rcnn_r50_fpn_1x_coco_attention_detector_3classes_normal_init.py'
         self.cfg = Config.fromfile(self.config)
+        # no flip for support img
+        self.cfg.data.train['pipeline'][3]['flip_ratio'] = 0.0
         self.support_datasets = [build_dataset(self.cfg.data.train)]
+        
         self.support_type = support_type
+        self.support_imgs = support_imgs
+        #self.support_imgs = ['000565', '054646', '058428']
+        
         self.init_weights(pretrained=pretrained)
 
     @property
@@ -132,7 +145,7 @@ class LogoTwoStageDetectorAttentionDetector(BaseDetector):
             self.index_class_style[img_class][img_style].append(i)
         
         if self.support_type == 'fixed':
-            self.support_imgs = ['000565', '054646', '058428']
+            #self.support_imgs = ['000565', '054646', '058428']
             # sample支持集图片(固定)
             self.support_all = []
             for i, _ in enumerate(self.classes):
@@ -233,6 +246,9 @@ class LogoTwoStageDetectorAttentionDetector(BaseDetector):
             s_cls = support['gt_labels'].data[0]
             img_batch.append(support['img'].data.unsqueeze(0).to(img.device))
         img_batch = torch.cat(img_batch, dim = 0)
+        
+        #print(img_batch.shape)
+        #sys.exit()
         
         feature_batch = self.extract_feat(img_batch)
     

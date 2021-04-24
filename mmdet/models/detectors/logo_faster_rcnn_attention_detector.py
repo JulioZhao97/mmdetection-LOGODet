@@ -14,7 +14,12 @@ class LogoFasterRCNNAttentionDetector(LogoTwoStageDetectorAttentionDetector):
                  test_cfg,
                  neck=None,
                  pretrained=None,
-                 support_type=None):
+                 support_type=None,
+                 support_imgs=None,
+                 data_path=None,
+                 classes=None,
+                 config=None
+                ):
         super(LogoFasterRCNNAttentionDetector, self).__init__(
             backbone=backbone,
             neck=neck,
@@ -23,4 +28,9 @@ class LogoFasterRCNNAttentionDetector(LogoTwoStageDetectorAttentionDetector):
             train_cfg=train_cfg,
             test_cfg=test_cfg,
             pretrained=pretrained,
-            support_type=support_type)
+            support_type=support_type,
+            support_imgs=support_imgs,
+            data_path=data_path,
+            classes=classes,
+            config=config
+        )

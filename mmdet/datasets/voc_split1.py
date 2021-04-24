@@ -10,11 +10,11 @@ from .xml_style import XMLDataset
 
 
 @DATASETS.register_module()
-class VOCDataset_3(XMLDataset):
+class VOCDataset_split1(XMLDataset):
     CLASSES = ('001-CCTV1', '019-fenghuangweishi', '011-history_channel')
     
     def __init__(self, **kwargs):
-        super(VOCDataset_3, self).__init__(**kwargs)
+        super(VOCDataset_split1, self).__init__(**kwargs)
         if 'VOC2007' in self.img_prefix:
             self.year = 2007
         elif 'VOC2012' in self.img_prefix:

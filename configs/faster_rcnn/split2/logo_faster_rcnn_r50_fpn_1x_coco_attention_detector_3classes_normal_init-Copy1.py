@@ -1,8 +1,11 @@
-# stage0训练一个基础的fasterRCNN，使用stage0的网络来获取memory module
 model = dict(
     type='LogoFasterRCNNAttentionDetector',
     pretrained='torchvision://resnet50',
     support_type='fixed',
+    support_imgs=['000565', '054646', '058428'],
+    data_path='/data/zhaozhiyuan/tb_variation/VOCdevkit_all',
+    classes=['001-CCTV1', '019-fenghuangweishi', '011-history_channel'],
+    config='/home/zhaozhiyuan/workspace/tb_variation/mmdetection-master/configs/faster_rcnn/split1/logo_faster_rcnn_r50_fpn_1x_coco_attention_detector_3classes_normal_init.py',
     backbone=dict(
         type='ResNet',
         depth=50,
@@ -42,13 +45,14 @@ model = dict(
             out_channels=256,
             featmap_strides=[4, 8, 16, 32]),
         bbox_head=dict(
-            type='IdeaTestAttentionSharedLOGO2FCBBoxHead',
+            type='AttentionSharedLOGO2FCBBoxHead',
             in_channels=256,
             fc_out_channels=1024,
             roi_feat_size=7,
             num_classes=3,
             score_type='mean',
             head_config = [True, False, False],
+            init_type='normal',
             bbox_coder=dict(
                 type='DeltaXYWHBBoxCoder',
                 target_means=[0.0, 0.0, 0.0, 0.0],
@@ -110,7 +114,7 @@ test_cfg = dict(
         score_thr=0.05,
         nms=dict(type='nms', iou_threshold=0.5),
         max_per_img=100))
-dataset_type = 'VOCDataset_3'
+dataset_type = 'VOCDataset_split1'
 data_root = '/data/zhaozhiyuan/tb_variation/VOCdevkit_all'
 img_norm_cfg = dict(
     mean=[123.675, 116.28, 103.53], std=[58.395, 57.12, 57.375], to_rgb=True)
@@ -151,8 +155,8 @@ data = dict(
     samples_per_gpu=1,
     workers_per_gpu=2,
     train=dict(
-        type='VOCDataset_3',
-        ann_file='/data/zhaozhiyuan/tb_variation/VOCdevkit_all/VOC2007/ImageSets/Main/trainval3.txt',
+        type='VOCDataset_split1',
+        ann_file='/data/zhaozhiyuan/tb_variation/VOCdevkit_all/VOC2007/ImageSets/Main/split1/trainval3.txt',
         img_prefix='/data/zhaozhiyuan/tb_variation/VOCdevkit_all/VOC2007/',
         pipeline=[
             dict(type='LoadImageFromFile'),
@@ -169,8 +173,8 @@ data = dict(
             dict(type='Collect', keys=['img', 'gt_bboxes', 'gt_labels'])
         ]),
     val=dict(
-        type='VOCDataset_3',
-        ann_file='/data/zhaozhiyuan/tb_variation/VOCdevkit_all/VOC2007/ImageSets/Main/test_within_style3.txt',
+        type='VOCDataset_split1',
+        ann_file='/data/zhaozhiyuan/tb_variation/VOCdevkit_all/VOC2007/ImageSets/Main/split1/test_within_style3.txt',
         img_prefix='/data/zhaozhiyuan/tb_variation/VOCdevkit_all/VOC2007/',
         pipeline=[
             dict(type='LoadImageFromFile'),
@@ -192,8 +196,8 @@ data = dict(
                 ])
         ]),
     test=dict(
-        type='VOCDataset_3',
-        ann_file='/data/zhaozhiyuan/tb_variation/VOCdevkit_all/VOC2007/ImageSets/Main/test_across_style3.txt',
+        type='VOCDataset_split1',
+        ann_file='/data/zhaozhiyuan/tb_variation/VOCdevkit_all/VOC2007/ImageSets/Main/split1/test_across_style3.txt',
         img_prefix='/data/zhaozhiyuan/tb_variation/VOCdevkit_all/VOC2007/',
         pipeline=[
             dict(type='LoadImageFromFile'),
@@ -232,5 +236,5 @@ log_level = 'INFO'
 load_from = None
 resume_from = None
 workflow = [('train', 1)]
-work_dir = '/data/zhaozhiyuan/mmdetection_checkpoints/4_23/logo_faster_rcnn_r50_fpn_1x_coco_attention_detector_idea_test'
+work_dir = '/data/zhaozhiyuan/mmdetection_checkpoints/4_24/logo_faster_rcnn_r50_fpn_1x_coco_attention_detector_3classes_normal_init'
 gpu_ids = range(0, 1)

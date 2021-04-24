@@ -1,6 +1,11 @@
 model = dict(
-    type='LogoFasterRCNN',
+    type='LogoFasterRCNNAttentionDetector',
     pretrained='torchvision://resnet50',
+    support_type='fixed',
+    support_imgs=['000565', '054646', '058428'],
+    data_path='/data/zhaozhiyuan/tb_variation/VOCdevkit_all',
+    classes=['001-CCTV1', '019-fenghuangweishi', '011-history_channel'],
+    config='/home/zhaozhiyuan/workspace/tb_variation/mmdetection-master/configs/faster_rcnn/split1/logo_faster_rcnn_r50_fpn_1x_coco_attention_detector_3classes_normal_init.py',
     backbone=dict(
         type='ResNet',
         depth=50,
@@ -31,21 +36,22 @@ model = dict(
             target_stds=[1.0, 1.0, 1.0, 1.0]),
         loss_cls=dict(
             type='CrossEntropyLoss', use_sigmoid=True, loss_weight=1.0),
-        loss_bbox=dict(
-            type='SmoothL1Loss', beta=1.0 / 9.0, loss_weight=1.0)),
+        loss_bbox=dict(type='SmoothL1Loss', beta = 1.0 / 9.0, loss_weight=1.0)),
     roi_head=dict(
-        type='LOGORoIHead',
+        type='AttentionLOGORoIHead',
         bbox_roi_extractor=dict(
             type='SingleRoIExtractor',
             roi_layer=dict(type='RoIAlign', output_size=7, sampling_ratio=0),
             out_channels=256,
             featmap_strides=[4, 8, 16, 32]),
         bbox_head=dict(
-            type='SharedLOGO2FCBBoxHead',
+            type='AttentionSharedLOGO2FCBBoxHead',
             in_channels=256,
             fc_out_channels=1024,
             roi_feat_size=7,
             num_classes=3,
+            score_type='mean',
+            head_config = [True, False, False],
             init_type='normal',
             bbox_coder=dict(
                 type='DeltaXYWHBBoxCoder',
@@ -54,9 +60,7 @@ model = dict(
             reg_class_agnostic=False,
             loss_cls=dict(
                 type='CrossEntropyLoss', use_sigmoid=False, loss_weight=1.0),
-            loss_bbox=dict(
-                type='SmoothL1Loss', beta=1.0 / 9.0,
-                loss_weight=1.0))))
+            loss_bbox=dict(type='SmoothL1Loss', beta = 1.0 / 9.0, loss_weight=1.0))))
 train_cfg = dict(
     rpn=dict(
         assigner=dict(
@@ -110,7 +114,7 @@ test_cfg = dict(
         score_thr=0.05,
         nms=dict(type='nms', iou_threshold=0.5),
         max_per_img=100))
-dataset_type = 'VOCDataset_3'
+dataset_type = 'VOCDataset_split1'
 data_root = '/data/zhaozhiyuan/tb_variation/VOCdevkit_all'
 img_norm_cfg = dict(
     mean=[123.675, 116.28, 103.53], std=[58.395, 57.12, 57.375], to_rgb=True)
@@ -118,7 +122,7 @@ train_pipeline = [
     dict(type='LoadImageFromFile'),
     dict(type='LoadAnnotations', with_bbox=True),
     dict(type='Resize', img_scale=(1333, 800), keep_ratio=False),
-    dict(type='RandomFlip', flip_ratio=0.5),
+    dict(type='RandomFlip', flip_ratio=0.0),
     dict(
         type='Normalize',
         mean=[123.675, 116.28, 103.53],
@@ -151,9 +155,8 @@ data = dict(
     samples_per_gpu=1,
     workers_per_gpu=2,
     train=dict(
-        type='VOCDataset_3',
-        ann_file=
-        '/data/zhaozhiyuan/tb_variation/VOCdevkit_all/VOC2007/ImageSets/Main/trainval3.txt',
+        type='VOCDataset_split1',
+        ann_file='/data/zhaozhiyuan/tb_variation/VOCdevkit_all/VOC2007/ImageSets/Main/split1/trainval3.txt',
         img_prefix='/data/zhaozhiyuan/tb_variation/VOCdevkit_all/VOC2007/',
         pipeline=[
             dict(type='LoadImageFromFile'),
@@ -170,9 +173,8 @@ data = dict(
             dict(type='Collect', keys=['img', 'gt_bboxes', 'gt_labels'])
         ]),
     val=dict(
-        type='VOCDataset_3',
-        ann_file=
-        '/data/zhaozhiyuan/tb_variation/VOCdevkit_all/VOC2007/ImageSets/Main/test_across_style3.txt',
+        type='VOCDataset_split1',
+        ann_file='/data/zhaozhiyuan/tb_variation/VOCdevkit_all/VOC2007/ImageSets/Main/split1/test_within_style3.txt',
         img_prefix='/data/zhaozhiyuan/tb_variation/VOCdevkit_all/VOC2007/',
         pipeline=[
             dict(type='LoadImageFromFile'),
@@ -194,9 +196,8 @@ data = dict(
                 ])
         ]),
     test=dict(
-        type='VOCDataset_3',
-        ann_file=
-        '/data/zhaozhiyuan/tb_variation/VOCdevkit_all/VOC2007/ImageSets/Main/test_across_style3.txt',
+        type='VOCDataset_split1',
+        ann_file='/data/zhaozhiyuan/tb_variation/VOCdevkit_all/VOC2007/ImageSets/Main/split1/test_across_style3.txt',
         img_prefix='/data/zhaozhiyuan/tb_variation/VOCdevkit_all/VOC2007/',
         pipeline=[
             dict(type='LoadImageFromFile'),
@@ -217,6 +218,7 @@ data = dict(
                     dict(type='Collect', keys=['img'])
                 ])
         ]))
+#evaluation = dict(interval=1, metric='mAP')
 optimizer = dict(type='SGD', lr=0.001, momentum=0.9, weight_decay=0.0001)
 optimizer_config = dict(grad_clip=None)
 lr_config = dict(
@@ -225,6 +227,7 @@ lr_config = dict(
     warmup_iters=500,
     warmup_ratio=0.001,
     step=[20000])
+#total_epochs = 12
 total_iters = 25000
 checkpoint_config = dict(interval=25000)
 log_config = dict(interval=50, hooks=[dict(type='TextLoggerHook')])
@@ -233,5 +236,5 @@ log_level = 'INFO'
 load_from = None
 resume_from = None
 workflow = [('train', 1)]
-work_dir = '/data/zhaozhiyuan/mmdetection_checkpoints/4_23/logo_faster_rcnn_r50_fpn_1x_coco_base_3classes_normal_init'
+work_dir = '/data/zhaozhiyuan/mmdetection_checkpoints/4_24/logo_faster_rcnn_r50_fpn_1x_coco_attention_detector_3classes_normal_init'
 gpu_ids = range(0, 1)
