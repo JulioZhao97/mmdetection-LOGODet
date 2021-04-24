@@ -45,3 +45,4 @@ undo
 - [ ] difference between domain adaptation
 - [ ] is our module really lead to the improvments?
 - [ ] comparison with other few-shot detection method 
+- [ ] data augmentation
