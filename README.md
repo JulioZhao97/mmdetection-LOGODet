@@ -18,7 +18,7 @@ gcc = 5.3.0
 
 ## Experiments
 
-each abltion experiment is repeated 10 times under same condition
+each abltion experiment is repeated >10 times under same condition
 
 ### 2021.4.23
 
