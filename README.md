@@ -46,3 +46,11 @@ undo
 - [ ] is our module really lead to the improvments?
 - [ ] comparison with other few-shot detection method 
 - [ ] data augmentation
+
+### 2021.5.6
+实验总结：
+1. random sampler等在每次运行中随机数都是固定的
+2. baseline在测试集上的性能会随着训练慢慢下降，20000个iteration的baseline比25000个性能高几个点
+3. RPN的召回会影响某些类的AP，有的类召回率是0导致AP很低
+实验计划：
+先解决波动过大的问题，原因是不是训练没有完全收敛？测试方法：baseline训练60000个iteration，在50000做衰减
